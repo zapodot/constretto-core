@@ -16,6 +16,11 @@
 package org.constretto.spring;
 
 import org.constretto.ConstrettoConfiguration;
+import org.constretto.exception.ConstrettoException;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanDefinitionStoreException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 
 import java.util.Properties;
@@ -63,9 +68,14 @@ public class ConstrettoPropertyPlaceholderConfigurer extends PropertyPlaceholder
     protected String resolvePlaceholder(String placeholder, Properties props, int systemPropertiesMode) {
         String value = null;
         if (ignoreUnresolvedPlaceHolders) {
-            value = configuration.evaluateTo(placeholder, "");
+            value = configuration.evaluateTo(placeholder, null);
         } else {
-            value = configuration.evaluateTo(String.class, placeholder);
+            try{
+                value = configuration.evaluateTo(String.class, placeholder);
+            } catch (ConstrettoException e ){
+                ConfigurableBeanFactory beanFactory;
+                beanFactory.
+            }
         }
         return null != value ? value : null;
     }
