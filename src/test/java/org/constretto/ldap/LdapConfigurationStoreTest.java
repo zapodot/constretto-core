@@ -3,23 +3,19 @@ package org.constretto.ldap;
 import com.sun.jndi.ldap.DefaultResponseControlFactory;
 import com.sun.jndi.ldap.LdapCtxFactory;
 import org.constretto.model.TaggedPropertySet;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.ldap.test.LdapTestUtils;
 import org.springframework.ldap.test.TestContextSourceFactoryBean;
 
 import javax.naming.Context;
-import javax.naming.InitialContext;
 import javax.naming.directory.InitialDirContext;
-import javax.naming.ldap.ControlFactory;
 import javax.naming.ldap.LdapContext;
 import java.util.Collection;
 import java.util.Hashtable;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author sondre
@@ -28,7 +24,6 @@ import static org.junit.Assert.assertNotNull;
 public class LdapConfigurationStoreTest {
 
     public static final int LDAP_PORT = 27389;
-    private LdapContextSource contextSource;
 
     @Before
     public void setUp() throws Exception {
@@ -41,19 +36,18 @@ public class LdapConfigurationStoreTest {
         testContextSourceFactoryBean.setPassword(LdapTestUtils.DEFAULT_PASSWORD);
         testContextSourceFactoryBean.setPort(LDAP_PORT);
         testContextSourceFactoryBean.afterPropertiesSet();
-        contextSource = (LdapContextSource) testContextSourceFactoryBean.getObject();
 
     }
 
     @Test
-    public void testBlah() throws Exception {
+    public void testParseConfiguration() throws Exception {
 
         Hashtable<String, String> ldapEnvironment = createLdapEnvironment();
 
         final InitialDirContext dirContext = new InitialDirContext(ldapEnvironment);
         final LdapConfigurationStore configurationStore = LdapConfigurationStoreBuilder.usingDirContext(dirContext).forDsn("cn=Some Person,ou=company1,c=Sweden,dc=jayway,dc=se");
         final Collection<TaggedPropertySet> propertySets = configurationStore.parseConfiguration();
-        assertNotNull(propertySets);
+        assertEquals(1, propertySets.size());
         dirContext.close();
 
     }
@@ -69,9 +63,4 @@ public class LdapConfigurationStoreTest {
         return ldapEnvironment;
     }
 
-    @After
-    public void tearDown() throws Exception {
-
-
-    }
 }
