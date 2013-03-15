@@ -5,6 +5,11 @@ Constretto - support for LDAP
 
 To use the LdapConfigurationStore:
 
+    import javax.naming.directory.InitialDirContext;
+    import org.constretto.ConstrettoBuilder;
+    import org.constretto.ConstrettoConfiguration;
+    ...
+    
     final InitialDirContext dirContext = ...
     final LdapConfigurationStore configurationStore = LdapConfigurationStoreBuilder
 								.usingDirContext(dirContext)
