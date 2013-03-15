@@ -2,6 +2,9 @@ package org.constretto.ldap;
 
 import com.sun.jndi.ldap.DefaultResponseControlFactory;
 import com.sun.jndi.ldap.LdapCtxFactory;
+import org.constretto.ConstrettoBuilder;
+import org.constretto.ConstrettoConfiguration;
+import org.constretto.annotation.Configuration;
 import org.constretto.model.TaggedPropertySet;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +25,13 @@ import static org.junit.Assert.assertEquals;
  */
 
 public class LdapConfigurationStoreTest {
+
+    public static class ConfigurableType {
+
+        @Configuration("cn")
+        public String name;
+
+    }
 
     public static final int LDAP_PORT = 27389;
 
@@ -49,7 +59,9 @@ public class LdapConfigurationStoreTest {
         final Collection<TaggedPropertySet> propertySets = configurationStore.parseConfiguration();
         assertEquals(1, propertySets.size());
         dirContext.close();
-
+        ConstrettoConfiguration constrettoConfiguration = new ConstrettoBuilder(false).addConfigurationStore(configurationStore).getConfiguration();
+        final ConfigurableType configurationObject = constrettoConfiguration.as(ConfigurableType.class);
+        assertEquals("Some Person", configurationObject.name);
     }
 
     private Hashtable<String, String> createLdapEnvironment() {
