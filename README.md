@@ -6,8 +6,12 @@ Constretto - support for LDAP
 To use the LdapConfigurationStore:
 
     final InitialDirContext dirContext = ...
-    final LdapConfigurationStore configurationStore = LdapConfigurationStoreBuilder.usingDirContext(dirContext).forDsn("cn=Some Person,ou=company1,c=Sweden,dc=jayway,dc=se");
-    ConstrettoConfiguration constrettoConfiguration =  new ConstrettoBuilder(false).addConfigurationStore(configurationStore).getConfiguration();
+    final LdapConfigurationStore configurationStore = LdapConfigurationStoreBuilder
+								.usingDirContext(dirContext)
+								.forDsn("cn=Some Person,ou=company1,c=Sweden,dc=jayway,dc=se");
+    ConstrettoConfiguration constrettoConfiguration =  new ConstrettoBuilder(false)
+								.addConfigurationStore(configurationStore)
+								.getConfiguration();
     final ConfigurableType configurationObject = constrettoConfiguration.as(ConfigurableType.class);
     ...
 
