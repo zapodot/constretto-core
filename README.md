@@ -21,8 +21,10 @@ To use the LdapConfigurationStore:
     ...
 
 Plans for further development
+-----------------------------
 * add the ability to specify a LDAP search term and build an hierarcy of configuration properties 
 * specify environment markers in DSN-s to allow configuration for more than one environment to be store in a single LDAP
+* merge project in to fork of the Constretto repository and create pull request to solve [CC-56](https://constretto.jira.com/browse/CC-56)
 
 Credits
 -------------
