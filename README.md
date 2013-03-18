@@ -29,7 +29,6 @@ Plans for further development
 Credits
 -------------
 * The [Constretto project](http://constretto.org/) is created and maintained by Kåre Nilsen and his colleagues at Arktekk AS. 
-* Ldap sample template has been borrowed from the Spring LDAP project (retrieved from https://src.springframework.org/svn/spring-ldap/trunk/test/integration-tests/src/test/resources/setup_data.ldif )
 
 
 

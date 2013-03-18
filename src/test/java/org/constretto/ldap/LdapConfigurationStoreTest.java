@@ -38,9 +38,9 @@ public class LdapConfigurationStoreTest {
     @Before
     public void setUp() throws Exception {
         TestContextSourceFactoryBean testContextSourceFactoryBean = new TestContextSourceFactoryBean();
-        testContextSourceFactoryBean.setLdifFile(new DefaultResourceLoader().getResource("classpath:setup_data.ldif"));
-        testContextSourceFactoryBean.setDefaultPartitionSuffix("dc=se");
-        testContextSourceFactoryBean.setDefaultPartitionName("jayway");
+        testContextSourceFactoryBean.setLdifFile(new DefaultResourceLoader().getResource("classpath:constretto.ldif"));
+        testContextSourceFactoryBean.setDefaultPartitionSuffix("dc=constretto,dc=org");
+        testContextSourceFactoryBean.setDefaultPartitionName("constretto");
         testContextSourceFactoryBean.setSingleton(true);
         testContextSourceFactoryBean.setPrincipal(LdapTestUtils.DEFAULT_PRINCIPAL);
         testContextSourceFactoryBean.setPassword(LdapTestUtils.DEFAULT_PASSWORD);
@@ -55,13 +55,13 @@ public class LdapConfigurationStoreTest {
         Hashtable<String, String> ldapEnvironment = createLdapEnvironment();
 
         final InitialDirContext dirContext = new InitialDirContext(ldapEnvironment);
-        final LdapConfigurationStore configurationStore = LdapConfigurationStoreBuilder.usingDirContext(dirContext).forDsn("cn=Some Person,ou=company1,c=Sweden,dc=jayway,dc=se");
+        final LdapConfigurationStore configurationStore = LdapConfigurationStoreBuilder.usingDirContext(dirContext).forDsn("cn=Kåre Nilsen,dc=constretto,dc=org");
         final Collection<TaggedPropertySet> propertySets = configurationStore.parseConfiguration();
         assertEquals(1, propertySets.size());
         dirContext.close();
         ConstrettoConfiguration constrettoConfiguration = new ConstrettoBuilder(false).addConfigurationStore(configurationStore).getConfiguration();
         final ConfigurableType configurationObject = constrettoConfiguration.as(ConfigurableType.class);
-        assertEquals("Some Person", configurationObject.name);
+        assertEquals("Kåre Nilsen", configurationObject.name);
     }
 
     private Hashtable<String, String> createLdapEnvironment() {
