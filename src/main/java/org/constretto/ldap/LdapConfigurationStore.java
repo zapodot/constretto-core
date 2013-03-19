@@ -15,29 +15,56 @@ import java.util.*;
  */
 public class LdapConfigurationStore implements ConfigurationStore {
 
-    private Attributes attributes;
+    private Map<String, Attributes> keyAttributesMap = Collections.emptyMap();
 
-    public LdapConfigurationStore(Attributes attributes) {
-        this.attributes = attributes;
+    public LdapConfigurationStore() {
+    }
+
+    public LdapConfigurationStore(LdapConfigurationStore oldStore, String key, Attributes attributes) {
+        this.keyAttributesMap = new HashMap<String, Attributes>(oldStore.keyAttributesMap.size() + 1);
+        this.keyAttributesMap.putAll(oldStore.keyAttributesMap);
+        this.keyAttributesMap.put(key, attributes);
+    }
+
+    public LdapConfigurationStore(LdapConfigurationStore oldStore, Attributes attributes) {
+        this(oldStore, null, attributes);
     }
 
     @Override
     public Collection<TaggedPropertySet> parseConfiguration() {
-        final NamingEnumeration<? extends Attribute> attributesAll = attributes.getAll();
-        Map<String, String> properties = new HashMap<String, String>(attributes.size());
+
+        Map<String, String> properties = new HashMap<String, String>(keyAttributesMap.size());
+
+        for(String key: keyAttributesMap.keySet()) {
+                properties.putAll(convertAttributesToProperties(key, keyAttributesMap.get(key)));
+        }
+
+        List<TaggedPropertySet> taggedPropertySets = new ArrayList<TaggedPropertySet>(1);
+        taggedPropertySets.add(new TaggedPropertySet(properties, getClass()));
+        return taggedPropertySets;
+    }
+
+    private Map<String, String> convertAttributesToProperties(String key, Attributes attributes) {
+
+        Map<String, String> properties = new HashMap<String, String>(keyAttributesMap.size());
         try {
+            final NamingEnumeration<? extends Attribute> attributesAll = attributes.getAll();
             while (attributesAll.hasMore()) {
                 final Attribute attribute = attributesAll.next();
-                properties.put(attribute.getID(), attribute.get().toString());
+                if(! attribute.getID().contains("password")) {
+                    properties.put(mergeKeyAndId(key, attribute.getID()), attribute.get().toString());
+                }
 
             }
 
         } catch (NamingException e) {
             throw new ConstrettoException("Could not read attributes from LDAP");
         }
-        List<TaggedPropertySet> taggedPropertySets = new ArrayList<TaggedPropertySet>(1);
-        taggedPropertySets.add(new TaggedPropertySet(properties, getClass()));
-        return taggedPropertySets;
+        return properties;
+    }
+
+    private String mergeKeyAndId(String key, String id) {
+        return key == null ? id : key + "." + id;
     }
 
 }

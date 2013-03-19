@@ -13,7 +13,12 @@ To use the LdapConfigurationStore:
     final InitialDirContext dirContext = ...
     final LdapConfigurationStore configurationStore = LdapConfigurationStoreBuilder
 								.usingDirContext(dirContext)
-								.forDsn("cn=Some Person,ou=company1,c=Sweden,dc=jayway,dc=se");
+								.addDsn("cn=Kaare Nilsen,dc=constretto,dc=org") // maps all attributes without prefix
+								.addDsn("sidekick", "cn=Jon-Anders Teigen,dc=constretto,dc=org") // maps LDAP attributes with prefix "sidekick"
+								.addUsingSearch("dc=constretto,dc=org", "(&(cn=K*)(objectClass=inetOrgPerson))", "uid")
+								    // Adds all LDAP objects matching the query to configuration attributes prefixed with the value of the "uid" attribute
+								.done();
+
     ConstrettoConfiguration constrettoConfiguration =  new ConstrettoBuilder(false)
 								.addConfigurationStore(configurationStore)
 								.getConfiguration();
@@ -22,7 +27,6 @@ To use the LdapConfigurationStore:
 
 Plans for further development
 -----------------------------
-* add the ability to specify a LDAP search term and build an hierarcy of configuration properties 
 * specify environment markers in DSN-s to allow configuration for more than one environment to be store in a single LDAP
 * merge project in to fork of the Constretto repository and create pull request to solve [CC-56](https://constretto.jira.com/browse/CC-56)
 
