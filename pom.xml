@@ -23,7 +23,6 @@
         <junit.version>4.11</junit.version>
         <spring-ldap.version>1.3.1.RELEASE</spring-ldap.version>
         <slf4j.version>1.7.2</slf4j.version>
-        <logback.version>1.0.7</logback.version>
         <mockito.version>1.9.5</mockito.version>
     </properties>
 
@@ -83,6 +82,19 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.0</version>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
