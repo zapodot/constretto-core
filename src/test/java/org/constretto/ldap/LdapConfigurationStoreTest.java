@@ -1,78 +1,46 @@
 package org.constretto.ldap;
 
-import com.sun.jndi.ldap.DefaultResponseControlFactory;
-import com.sun.jndi.ldap.LdapCtxFactory;
-import org.constretto.ConstrettoBuilder;
-import org.constretto.ConstrettoConfiguration;
-import org.constretto.annotation.Configuration;
-import org.constretto.model.TaggedPropertySet;
-import org.junit.Before;
+import org.constretto.exception.ConstrettoException;
 import org.junit.Test;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.ldap.test.LdapTestUtils;
-import org.springframework.ldap.test.TestContextSourceFactoryBean;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
-import javax.naming.Context;
-import javax.naming.directory.InitialDirContext;
-import javax.naming.ldap.LdapContext;
-import java.util.Collection;
-import java.util.Hashtable;
+import javax.naming.NamingEnumeration;
+import javax.naming.NamingException;
+import javax.naming.directory.Attributes;
 
-import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.*;
 
 /**
- * @author sondre
+ * @author zapodot
  */
-
+@RunWith(MockitoJUnitRunner.class)
 public class LdapConfigurationStoreTest {
 
-    public static class ConfigurableType {
+    @Mock
+    private Attributes attributes;
 
-        @Configuration("cn")
-        public String name;
+    @Mock
+    private NamingEnumeration attributesNamingEnumeration;
 
+    private LdapConfigurationStore parentLdapConfigurationStore = new LdapConfigurationStore();
+
+
+    @Test(expected = ConstrettoException.class)
+    public void testParseConfigurationAttributesReadFailed() throws Exception {
+
+        when(attributes.getAll()).thenReturn(attributesNamingEnumeration);
+        when(attributesNamingEnumeration.hasMore()).thenThrow(new NamingException());
+        try {
+            final LdapConfigurationStore ldapConfigurationStore = new LdapConfigurationStore(
+                    parentLdapConfigurationStore,
+                    attributes);
+            ldapConfigurationStore.parseConfiguration();
+
+        } finally {
+            verify(attributes).getAll();
+            verifyNoMoreInteractions(attributes);
+        }
     }
-
-    public static final int LDAP_PORT = 27389;
-
-    @Before
-    public void setUp() throws Exception {
-        TestContextSourceFactoryBean testContextSourceFactoryBean = new TestContextSourceFactoryBean();
-        testContextSourceFactoryBean.setLdifFile(new DefaultResourceLoader().getResource("classpath:constretto.ldif"));
-        testContextSourceFactoryBean.setDefaultPartitionSuffix("dc=constretto,dc=org");
-        testContextSourceFactoryBean.setDefaultPartitionName("constretto");
-        testContextSourceFactoryBean.setSingleton(true);
-        testContextSourceFactoryBean.setPrincipal(LdapTestUtils.DEFAULT_PRINCIPAL);
-        testContextSourceFactoryBean.setPassword(LdapTestUtils.DEFAULT_PASSWORD);
-        testContextSourceFactoryBean.setPort(LDAP_PORT);
-        testContextSourceFactoryBean.afterPropertiesSet();
-
-    }
-
-    @Test
-    public void testParseConfiguration() throws Exception {
-
-        Hashtable<String, String> ldapEnvironment = createLdapEnvironment();
-
-        final InitialDirContext dirContext = new InitialDirContext(ldapEnvironment);
-        final LdapConfigurationStore configurationStore = LdapConfigurationStoreBuilder.usingDirContext(dirContext).forDsn("cn=Kåre Nilsen,dc=constretto,dc=org");
-        final Collection<TaggedPropertySet> propertySets = configurationStore.parseConfiguration();
-        assertEquals(1, propertySets.size());
-        dirContext.close();
-        ConstrettoConfiguration constrettoConfiguration = new ConstrettoBuilder(false).addConfigurationStore(configurationStore).getConfiguration();
-        final ConfigurableType configurationObject = constrettoConfiguration.as(ConfigurableType.class);
-        assertEquals("Kåre Nilsen", configurationObject.name);
-    }
-
-    private Hashtable<String, String> createLdapEnvironment() {
-        Hashtable<String, String> ldapEnvironment = new Hashtable<String, String>();
-        ldapEnvironment.put(LdapContext.CONTROL_FACTORIES, DefaultResponseControlFactory.class.getName());
-        ldapEnvironment.put(Context.PROVIDER_URL, String.format("ldap://localhost:%1$s", LDAP_PORT));
-        ldapEnvironment.put(Context.INITIAL_CONTEXT_FACTORY, LdapCtxFactory.class.getName());
-        ldapEnvironment.put(Context.SECURITY_PRINCIPAL, LdapTestUtils.DEFAULT_PRINCIPAL);
-        ldapEnvironment.put(Context.SECURITY_CREDENTIALS, LdapTestUtils.DEFAULT_PASSWORD);
-        ldapEnvironment.put(Context.SECURITY_PROTOCOL, "simple");
-        return ldapEnvironment;
-    }
-
 }

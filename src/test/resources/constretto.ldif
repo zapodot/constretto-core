@@ -10,7 +10,7 @@ cn: role_developer
 uniqueMember: cn=Kåre Nilsen,dc=constretto,dc=org
 uniqueMember: cn=Jon-Anders Teigen,dc=constretto,dc=org
 
-dn: cn=Kåre Nilsen,dc=constretto,dc=org
+dn: cn=Kaare Nilsen,dc=constretto,dc=org
 objectclass: top
 objectclass: person
 objectclass: organizationalPerson
