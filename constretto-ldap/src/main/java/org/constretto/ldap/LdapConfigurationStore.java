@@ -40,7 +40,6 @@ public class LdapConfigurationStore implements ConfigurationStore {
         this(oldStore, null, attributes, tags);
     }
 
-    @Override
     public Collection<TaggedPropertySet> parseConfiguration() {
 
         Map<String, String> properties = new HashMap<String, String>(keyAttributesMap.size());
