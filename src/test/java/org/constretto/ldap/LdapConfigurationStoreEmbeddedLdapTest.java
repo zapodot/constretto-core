@@ -5,6 +5,7 @@ import com.sun.jndi.ldap.LdapCtxFactory;
 import org.constretto.ConstrettoBuilder;
 import org.constretto.ConstrettoConfiguration;
 import org.constretto.annotation.Configuration;
+import org.constretto.model.ConfigurationValue;
 import org.constretto.model.TaggedPropertySet;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,7 +61,7 @@ public class LdapConfigurationStoreEmbeddedLdapTest {
         final InitialDirContext dirContext = new InitialDirContext(ldapEnvironment);
         final LdapConfigurationStore configurationStore = LdapConfigurationStoreBuilder.usingDirContext(dirContext)
                 .addDsn("cn=Kaare Nilsen,dc=constretto,dc=org")
-                .addDsn("sidekick", "cn=Jon-Anders Teigen,dc=constretto,dc=org")
+                .addDsnWithKey("sidekick", "cn=Jon-Anders Teigen,dc=constretto,dc=org")
                 .done();
         final Collection<TaggedPropertySet> propertySets = configurationStore.parseConfiguration();
         assertEquals(1, propertySets.size());

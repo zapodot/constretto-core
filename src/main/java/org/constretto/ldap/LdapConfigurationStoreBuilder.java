@@ -34,19 +34,21 @@ public class LdapConfigurationStoreBuilder {
         }
     }
 
-    public LdapConfigurationStoreBuilder addDsn(final String key, final String distinguishedName) {
+    public LdapConfigurationStoreBuilder addDsnWithKey(final String key, final String distinguishedName, String... tags) {
         checkStringArgument("distinguishedName", distinguishedName);
-        ldapConfigurationStore = new LdapConfigurationStore(ldapConfigurationStore, key, readAttributesFromLdap(distinguishedName));
+        ldapConfigurationStore = new LdapConfigurationStore(ldapConfigurationStore, key, readAttributesFromLdap(distinguishedName),
+                tags);
         return this;
     }
 
-    public LdapConfigurationStoreBuilder addDsn(final String distinguishedName) {
+    public LdapConfigurationStoreBuilder addDsn(final String distinguishedName, final String... tags) {
         checkStringArgument("distinguishedName", distinguishedName);
-        ldapConfigurationStore = new LdapConfigurationStore(ldapConfigurationStore, readAttributesFromLdap(distinguishedName));
+        ldapConfigurationStore = new LdapConfigurationStore(ldapConfigurationStore, readAttributesFromLdap(distinguishedName),
+                tags);
         return this;
     }
 
-    public LdapConfigurationStoreBuilder addUsingSearch(final String searchBase, final String filter, final String keyAttribute) {
+    public LdapConfigurationStoreBuilder addUsingSearch(final String searchBase, final String filter, final String keyAttribute, final String... tags) {
 
         SearchControls searchControls = new SearchControls();
         searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
@@ -60,7 +62,7 @@ public class LdapConfigurationStoreBuilder {
                     throw new ConstrettoException(String.format("The LDAP object \"%1$s\" has no attribute value for attribute \"%2$s\"", result.getName(), keyAttribute));
                 }
                 final String key = attribute.get().toString();
-                ldapConfigurationStore = new LdapConfigurationStore(ldapConfigurationStore, key, attributes);
+                ldapConfigurationStore = new LdapConfigurationStore(ldapConfigurationStore, key, attributes, tags);
             }
         } catch (NamingException e) {
             throw new ConstrettoException(

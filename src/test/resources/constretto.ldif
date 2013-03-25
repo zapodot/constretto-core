@@ -7,8 +7,14 @@ dn: cn=role_developer,ou=groups,dc=constretto,dc=org
 objectclass: top
 objectclass: groupOfUniqueNames
 cn: role_developer
-uniqueMember: cn=Kåre Nilsen,dc=constretto,dc=org
+uniqueMember: cn=Kaare Nilsen,dc=constretto,dc=org
 uniqueMember: cn=Jon-Anders Teigen,dc=constretto,dc=org
+
+dn: cn=contributors,ou=groups,dc=constretto,dc=org
+objectclass: top
+objectclass: groupOfUniqueNames
+cn: contributors
+uniqueMember: cn=Sondre Eikanger Kvalø,dc=sonat,c=no
 
 dn: cn=Kaare Nilsen,dc=constretto,dc=org
 objectclass: top
@@ -33,3 +39,15 @@ cn: Jon-Anders Teigen
 sn: Person
 description: Developer
 telephoneNumber: +47 22 00 00 10
+
+dn: cn=Sondre Eikanger Kvalø,dc=sonat,c=no
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+uid: zapodot
+userPassword: password
+cn: Sondre Eikanger Kvalø
+sn: Person
+description: Developer
+telephoneNumber: +47 55 00 00 00
